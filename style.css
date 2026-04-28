@@ -1,0 +1,292 @@
+/* =========================
+   ベース（ダーク固定）
+========================= */
+body {
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* =========================
+   カード
+========================= */
+.card {
+  border: none;
+  border-radius: 12px;
+}
+
+.card-body {
+  padding: 1.2rem;
+}
+
+/* =========================
+   問題画像
+========================= */
+#question-image {
+  border-radius: 8px;
+  background-color: #000;
+}
+
+/* =========================
+   問題番号（問題 1/10）
+========================= */
+#question-counter {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* =========================
+   ボタン（タップしやすく）
+========================= */
+button {
+  border-radius: 10px !important;
+}
+
+/* 4択ボタン */
+.btn-outline-light {
+  border-width: 2px;
+  font-size: 1.2rem;
+}
+
+/* 4択の選択状態 */
+.btn-light {
+  background-color: #ffffff !important;
+  color: #000 !important;
+  font-weight: bold;
+}
+
+/* 次へボタン */
+#next-btn {
+  font-size: 1.1rem;
+  padding: 12px;
+}
+
+/* =========================
+   入力欄（記述・論述）
+========================= */
+input.form-control {
+  background-color: #1e1e1e;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+input.form-control:focus {
+  background-color: #1e1e1e;
+  color: #fff;
+  border-color: #888;
+  box-shadow: none;
+}
+
+/* ラベル（A, B, C...） */
+label {
+  font-weight: bold;
+  margin-top: 8px;
+}
+
+/* =========================
+   結果画面（PCテーブル）
+========================= */
+.table {
+  font-size: 0.9rem;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+/* =========================
+   結果カード（スマホ）
+========================= */
+#result-cards .card {
+  border: 1px solid #333;
+}
+
+/* 正解 */
+.correct {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+/* 不正解 */
+.incorrect {
+  color: #f44336;
+  font-weight: bold;
+}
+
+/* =========================
+   見出し
+========================= */
+h2,
+h4,
+h5 {
+  font-weight: 600;
+}
+
+/* =========================
+   論述テキスト
+========================= */
+#cloze-text {
+  line-height: 1.6;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+/* =========================
+   A / B / C ラベル
+========================= */
+#answer-area label {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* =========================
+   スコア表示
+========================= */
+#score {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* =========================
+   採点画面の問題画像
+========================= */
+.result-image-pc {
+  max-width: 420px;
+  display: block;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.result-image-mobile {
+  border-radius: 8px;
+  background-color: #000;
+}
+
+#back-to-start-btn {
+  min-width: 220px;
+}
+
+/* =========================
+   採点テーブル：文字サイズ拡大
+========================= */
+#result-table td,
+#result-table th {
+  font-size: 1.8rem;
+  line-height: 1.4;
+}
+
+/* #列（番号）をさらに見やすく */
+#result-table td:first-child {
+  font-weight: 700;
+  font-size: 2rem;
+}
+
+/* 判定（○×）を強調 */
+#result-table td:last-child {
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+/* =========================
+   選択ボタンUI
+========================= */
+.option-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 1100px;
+}
+
+.option-group input[type="radio"] {
+  display: none;
+}
+
+.option-group label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 1px solid #4a4f57;
+  border-radius: 10px;
+  background-color: #2a2f36;
+  color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  user-select: none;
+  margin-top: 0; /* 通常label用の余計な余白を消す */
+}
+
+.option-group label:hover {
+  background-color: #353b44;
+  border-color: #6b7280;
+}
+
+/* 選択状態：落ち着いた緑 */
+.option-group input[type="radio"]:checked + label {
+  background-color: #61923a;
+  border-color: #7fbf4d;
+  color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(97, 146, 58, 0.25);
+}
+
+.option-group input[type="radio"]:checked + label:hover {
+  background-color: #6fa844;
+  border-color: #8dcb59;
+}
+
+.option-group-years label {
+  min-width: 96px;
+}
+
+.option-group-formats {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.option-group-formats label {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+/* =========================
+   余白調整（スマホ）
+========================= */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+
+  #question-image {
+    margin-bottom: 12px;
+  }
+
+  .option-group-years label,
+  .option-group-formats label {
+    width: 100%;
+  }
+}
+
+/* =========================
+   判定記号（○ / ×）
+========================= */
+
+/* 正解（○） */
+#result-table td:last-child .correct,
+#result-table td:last-child.correct {
+  color: #4caf50;
+}
+
+/* 不正解（×） */
+#result-table td:last-child .incorrect,
+#result-table td:last-child.incorrect {
+  color: #f44336;
+}
