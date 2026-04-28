@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>歴史能力検定2級 日本史 過去問</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- 自前CSS -->
+  <link rel="stylesheet" href="style.css?v=1.0.0">
+</head>
+
+<body class="bg-dark text-light">
+
+<div class="container py-4">
+
+  <!-- ========================= -->
+  <!-- ① 設定画面 -->
+  <!-- ========================= -->
+  <div id="screen-start">
+
+    <h2 class="mb-4">歴史能力検定2級 日本史</h2>
+
+    <!-- 出題年度 -->
+    <div class="mb-5">
+      <h5 class="mb-3">出題年度</h5>
+
+      <div class="option-group option-group-years">
+        <input type="radio" id="year-all" name="year" value="all" checked>
+        <label for="year-all">全年度</label>
+
+        <input type="radio" id="year-2008" name="year" value="2008">
+        <label for="year-2008">2008</label>
+
+        <input type="radio" id="year-2009" name="year" value="2009">
+        <label for="year-2009">2009</label>
+
+        <input type="radio" id="year-2010" name="year" value="2010">
+        <label for="year-2010">2010</label>
+
+        <input type="radio" id="year-2011" name="year" value="2011">
+        <label for="year-2011">2011</label>
+
+        <input type="radio" id="year-2012" name="year" value="2012">
+        <label for="year-2012">2012</label>
+
+        <input type="radio" id="year-2016" name="year" value="2016">
+        <label for="year-2016">2016</label>
+
+        <input type="radio" id="year-2017" name="year" value="2017">
+        <label for="year-2017">2017</label>
+
+        <input type="radio" id="year-2018" name="year" value="2018">
+        <label for="year-2018">2018</label>
+
+        <input type="radio" id="year-2019" name="year" value="2019">
+        <label for="year-2019">2019</label>
+
+        <input type="radio" id="year-2020" name="year" value="2020">
+        <label for="year-2020">2020</label>
+
+        <input type="radio" id="year-2021" name="year" value="2021">
+        <label for="year-2021">2021</label>
+
+        <input type="radio" id="year-2022" name="year" value="2022">
+        <label for="year-2022">2022</label>
+
+        <input type="radio" id="year-2023" name="year" value="2023">
+        <label for="year-2023">2023</label>
+
+        <input type="radio" id="year-2024" name="year" value="2024">
+        <label for="year-2024">2024</label>
+      </div>
+    </div>
+
+    <!-- 出題形式 -->
+    <div class="mb-5">
+      <h5 class="mb-3">出題形式</h5>
+
+      <div class="option-group option-group-formats">
+        <input type="radio" id="format-full" name="format" value="full" checked>
+        <label for="format-full">4択22問 記述3問 論述2問</label>
+
+        <input type="radio" id="format-mid" name="format" value="mid">
+        <label for="format-mid">4択10問 記述4問 論述1問</label>
+
+        <input type="radio" id="format-small1" name="format" value="small1">
+        <label for="format-small1">4択8問 記述2問</label>
+
+        <input type="radio" id="format-small2" name="format" value="small2">
+        <label for="format-small2">4択4問 記述1問</label>
+
+        <input type="radio" id="format-choice5" name="format" value="choice5">
+        <label for="format-choice5">4択5問</label>
+
+        <input type="radio" id="format-short8" name="format" value="short8">
+        <label for="format-short8">記述8問</label>
+
+        <input type="radio" id="format-short4" name="format" value="short4">
+        <label for="format-short4">記述4問</label>
+
+        <input type="radio" id="format-essay2" name="format" value="essay2">
+        <label for="format-essay2">論述2問</label>
+
+        <input type="radio" id="format-choice1" name="format" value="choice1">
+        <label for="format-choice1">4択1問</label>
+
+        <input type="radio" id="format-short1" name="format" value="short1">
+        <label for="format-short1">記述1問</label>
+
+        <input type="radio" id="format-essay1" name="format" value="essay1">
+        <label for="format-essay1">論述1問</label>
+      </div>
+    </div>
+
+    <button id="start-btn" class="btn btn-primary btn-lg w-100">
+      開始
+    </button>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- ② 出題画面 -->
+  <!-- ========================= -->
+  <div id="screen-quiz" class="d-none">
+
+    <div class="card bg-secondary">
+      <div class="card-body">
+
+        <h5 id="question-counter"></h5>
+
+        <img id="question-image" class="img-fluid mb-3" alt="問題画像">
+
+        <!-- 論述テキスト -->
+        <div id="cloze-text" class="mb-3"></div>
+
+        <!-- 回答エリア -->
+        <div id="answer-area"></div>
+
+        <button id="next-btn" class="btn btn-primary btn-lg w-100 mt-3">
+          次へ
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- ③ 結果画面 -->
+  <!-- ========================= -->
+  <div id="screen-result" class="d-none">
+
+    <h4 id="score" class="mb-4"></h4>
+
+    <div class="d-flex justify-content-center mb-4">
+      <button id="back-to-start-btn" class="btn btn-outline-light btn-lg">
+        スタート画面に戻る
+      </button>
+    </div>
+
+    <!-- PC（表） -->
+    <div class="d-none d-md-block">
+      <table class="table table-dark table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>問題</th>
+            <th>正解</th>
+            <th>あなたの答え</th>
+            <th>判定</th>
+          </tr>
+        </thead>
+        <tbody id="result-table"></tbody>
+      </table>
+    </div>
+
+    <!-- スマホ（カード） -->
+    <div class="d-block d-md-none" id="result-cards"></div>
+
+  </div>
+
+</div>
+
+<!-- JS -->
+<script src="app.js?v=1.0.0"></script>
+
+</body>
+</html>
