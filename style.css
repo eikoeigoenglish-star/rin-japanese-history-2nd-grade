@@ -290,3 +290,30 @@ h5 {
 #result-table td:last-child.incorrect {
   color: #f44336;
 }
+
+/* =========================
+   級切り替えボタン
+========================= */
+
+@media (max-width: 768px) {
+  .header-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .switch-btn {
+  border: 1px solid #7fbf4d;
+  color: #7fbf4d;
+  background-color: transparent;
+
+  /* ここが効く */
+  box-shadow: 0 0 0 1px rgba(127, 191, 77, 0.2);
+}
+
+   .switch-btn:hover {
+     background-color: #61923a;
+     color: #fff;
+     box-shadow: 0 0 8px rgba(127, 191, 77, 0.4);
+   }
+}
