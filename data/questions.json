@@ -69,7 +69,9 @@
 { "id": "g2-2009-45", "year": 2009, "questionNumber": 45, "type": "choice", "image": "images/g2-2009-45.png", "answer": "2" },
 { "id": "g2-2009-46", "year": 2009, "questionNumber": 46, "type": "short", "image": "images/g2-2009-46.png", "answer": "帥" },
 { "id": "g2-2009-47", "year": 2009, "questionNumber": 47, "type": "short", "image": "images/g2-2009-47.png", "answer": "天下布武" },
+{ "id": "g2-2009-48", "year": 2009, "questionNumber": 48, "type": "short", "image": "images/g2-2009-48.png", "answer": "緒方洪庵" },
 { "id": "g2-2009-49", "year": 2009, "questionNumber": 49, "type": "short", "image": "images/g2-2009-49.png", "answer": "鹿鳴館" },
+{ "id": "g2-2009-50", "year": 2009, "questionNumber": 50, "type": "short", "image": "images/g2-2009-50.png", "answer": "新体制運動" },
 { "id": "g2-2010-01", "year": 2010, "questionNumber": 1, "type": "choice", "image": "images/g2-2010-01.png", "answer": "3" },
 { "id": "g2-2010-02", "year": 2010, "questionNumber": 2, "type": "choice", "image": "images/g2-2010-02.png", "answer": "2" },
 { "id": "g2-2010-03", "year": 2010, "questionNumber": 3, "type": "choice", "image": "images/g2-2010-03.png", "answer": "4" },
@@ -285,6 +287,7 @@
 { "id": "g2-2018-47", "year": 2018, "questionNumber": 47, "type": "short", "image": "images/g2-2018-47.png", "answer": "流鏑馬" },
 { "id": "g2-2018-48", "year": 2018, "questionNumber": 48, "type": "short", "image": "images/g2-2018-48.png", "answer": "雨森芳洲" },
 { "id": "g2-2018-49", "year": 2018, "questionNumber": 49, "type": "short", "image": "images/g2-2018-49.png", "answer": "岸田劉生" },
+{ "id": "g2-2018-50", "year": 2018, "questionNumber": 50, "type": "short", "image": "images/g2-2018-50.png", "answer": "汪兆銘" },
 { "id": "g2-2019-01", "year": 2019, "questionNumber": 1, "type": "choice", "image": "images/g2-2019-01.png", "answer": "3" },
 { "id": "g2-2019-02", "year": 2019, "questionNumber": 2, "type": "choice", "image": "images/g2-2019-02.png", "answer": "4" },
 { "id": "g2-2019-03", "year": 2019, "questionNumber": 3, "type": "choice", "image": "images/g2-2019-03.png", "answer": "2" },
@@ -349,6 +352,8 @@
 { "id": "g2-2020-45", "year": 2020, "questionNumber": 45, "type": "choice", "image": "images/g2-2020-45.png", "answer": "3" },
 { "id": "g2-2020-46", "year": 2020, "questionNumber": 46, "type": "short", "image": "images/g2-2020-46.png", "answer": "木簡" },
 { "id": "g2-2020-47", "year": 2020, "questionNumber": 47, "type": "short", "image": "images/g2-2020-47.png", "answer": "夢窓疎石" },
+{ "id": "g2-2020-48", "year": 2020, "questionNumber": 48, "type": "short", "image": "images/g2-2020-48.png", "answer": "旗本" },
+{ "id": "g2-2020-49", "year": 2020, "questionNumber": 49, "type": "short", "image": "images/g2-2020-49.png", "answer": "本木昌造" },
 { "id": "g2-2020-50", "year": 2020, "questionNumber": 50, "type": "short", "image": "images/g2-2020-50.png", "answer": "志賀潔" },
 { "id": "g2-2021-01", "year": 2021, "questionNumber": 1, "type": "choice", "image": "images/g2-2021-01.png", "answer": "2" },
 { "id": "g2-2021-02", "year": 2021, "questionNumber": 2, "type": "choice", "image": "images/g2-2021-02.png", "answer": "4" },
@@ -488,5 +493,6 @@
 { "id": "g2-2024-46", "year": 2024, "questionNumber": 46, "type": "short", "image": "images/g2-2024-46.png", "answer": "庚午年籍" },
 { "id": "g2-2024-47", "year": 2024, "questionNumber": 47, "type": "short", "image": "images/g2-2024-47.png", "answer": "正法眼蔵" },
 { "id": "g2-2024-48", "year": 2024, "questionNumber": 48, "type": "short", "image": "images/g2-2024-48.png", "answer": "間部詮房" },
+{ "id": "g2-2024-49", "year": 2024, "questionNumber": 49, "type": "short", "image": "images/g2-2024-49.png", "answer": "五榜の掲示" },
 { "id": "g2-2024-50", "year": 2024, "questionNumber": 50, "type": "short", "image": "images/g2-2024-50.png", "answer": "国民皆兵" }
 ]
