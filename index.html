@@ -3,195 +3,244 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>歴史能力検定2級 日本史 過去問</title>
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#101014">
+  <title>歴史能力検定2級 日本史 過去問トレーニング</title>
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 
-  <!-- 自前CSS -->
-  <link rel="stylesheet" href="style.css?v=1.0.0">
+  <link rel="stylesheet" href="style.css?v=2.0.0">
 
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TKL5WQJBSB"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-TKL5WQJBSB');
   </script>
 </head>
 
-<body class="bg-dark text-light">
-
-<div class="container py-4">
+<body>
+<div class="app">
 
   <!-- ========================= -->
   <!-- ① 設定画面 -->
   <!-- ========================= -->
-  <div id="screen-start">
+  <main id="screen-start" class="screen">
+    <header class="app-header">
+      <div class="header-row">
+        <div>
+          <p class="app-eyebrow">HISTORY PROFICIENCY TEST — GRADE 2</p>
+          <h1 class="app-title">
+            歴史能力検定2級
+            <span class="app-title-sub">日本史 過去問トレーニング</span>
+          </h1>
+        </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="mb-0">歴史能力検定2級 日本史</h2>
-      <a href="https://eikoeigoenglish-star.github.io/rin-japanese-history-1st-grade/" class="btn btn-outline-success switch-btn">1級へ →</a>
-    </div>
+        <a
+          href="https://eikoeigoenglish-star.github.io/rin-japanese-history-1st-grade/"
+          class="switch-link"
+        >
+          1級へ
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <p class="app-lead">出題年度と問題構成を選んで開始します。</p>
+    </header>
+
     <!-- 出題年度 -->
-    <div class="mb-5">
-      <h5 class="mb-3">出題年度</h5>
+    <section class="panel" aria-labelledby="year-heading">
+      <div class="panel-head">
+        <h2 id="year-heading" class="panel-title">出題年度</h2>
+        <p class="panel-note">1つ選択</p>
+      </div>
 
-      <div class="option-group option-group-years">
+      <div class="chip-group year-chip-group" role="radiogroup" aria-labelledby="year-heading">
         <input type="radio" id="year-all" name="year" value="all" checked>
-        <label for="year-all">全年度</label>
+        <label class="chip chip-wide" for="year-all">全年度</label>
 
         <input type="radio" id="year-2008" name="year" value="2008">
-        <label for="year-2008">2008</label>
+        <label class="chip" for="year-2008">2008</label>
 
         <input type="radio" id="year-2009" name="year" value="2009">
-        <label for="year-2009">2009</label>
+        <label class="chip" for="year-2009">2009</label>
 
         <input type="radio" id="year-2010" name="year" value="2010">
-        <label for="year-2010">2010</label>
+        <label class="chip" for="year-2010">2010</label>
 
         <input type="radio" id="year-2011" name="year" value="2011">
-        <label for="year-2011">2011</label>
+        <label class="chip" for="year-2011">2011</label>
 
         <input type="radio" id="year-2012" name="year" value="2012">
-        <label for="year-2012">2012</label>
+        <label class="chip" for="year-2012">2012</label>
 
         <input type="radio" id="year-2016" name="year" value="2016">
-        <label for="year-2016">2016</label>
+        <label class="chip" for="year-2016">2016</label>
 
         <input type="radio" id="year-2017" name="year" value="2017">
-        <label for="year-2017">2017</label>
+        <label class="chip" for="year-2017">2017</label>
 
         <input type="radio" id="year-2018" name="year" value="2018">
-        <label for="year-2018">2018</label>
+        <label class="chip" for="year-2018">2018</label>
 
         <input type="radio" id="year-2019" name="year" value="2019">
-        <label for="year-2019">2019</label>
+        <label class="chip" for="year-2019">2019</label>
 
         <input type="radio" id="year-2020" name="year" value="2020">
-        <label for="year-2020">2020</label>
+        <label class="chip" for="year-2020">2020</label>
 
         <input type="radio" id="year-2021" name="year" value="2021">
-        <label for="year-2021">2021</label>
+        <label class="chip" for="year-2021">2021</label>
 
         <input type="radio" id="year-2022" name="year" value="2022">
-        <label for="year-2022">2022</label>
+        <label class="chip" for="year-2022">2022</label>
 
         <input type="radio" id="year-2023" name="year" value="2023">
-        <label for="year-2023">2023</label>
+        <label class="chip" for="year-2023">2023</label>
 
         <input type="radio" id="year-2024" name="year" value="2024">
-        <label for="year-2024">2024</label>
+        <label class="chip" for="year-2024">2024</label>
       </div>
-    </div>
+    </section>
 
     <!-- 出題形式 -->
-    <div class="mb-5">
-      <h5 class="mb-3">出題形式</h5>
+    <section class="panel" aria-labelledby="format-heading">
+      <div class="panel-head">
+        <h2 id="format-heading" class="panel-title">出題形式</h2>
+        <p class="panel-note">1つ選択</p>
+      </div>
+      <p class="panel-desc">本番型から1問だけの確認まで、学習時間に合わせて選べます。</p>
 
-      <div class="option-group option-group-formats">
+      <div class="format-list" role="radiogroup" aria-labelledby="format-heading">
         <input type="radio" id="format-mid" name="format" value="mid" checked>
-        <label for="format-mid">4択22問 記述3問</label>
+        <label class="format-option" for="format-mid">
+          <span class="format-title">本番型 25問</span>
+          <span class="format-detail">4択22問・記述3問</span>
+        </label>
 
         <input type="radio" id="format-small1" name="format" value="small1">
-        <label for="format-small1">4択10問 記述2問</label>
+        <label class="format-option" for="format-small1">
+          <span class="format-title">標準 12問</span>
+          <span class="format-detail">4択10問・記述2問</span>
+        </label>
 
         <input type="radio" id="format-small2" name="format" value="small2">
-        <label for="format-small2">4択4問 記述1問</label>
+        <label class="format-option" for="format-small2">
+          <span class="format-title">ミニ 5問</span>
+          <span class="format-detail">4択4問・記述1問</span>
+        </label>
 
         <input type="radio" id="format-choice10" name="format" value="choice10">
-        <label for="format-choice10">4択10問</label>
+        <label class="format-option" for="format-choice10">
+          <span class="format-title">4択 10問</span>
+          <span class="format-detail">選択問題だけをまとめて確認</span>
+        </label>
 
         <input type="radio" id="format-choice5" name="format" value="choice5">
-        <label for="format-choice5">4択5問</label>
+        <label class="format-option" for="format-choice5">
+          <span class="format-title">4択 5問</span>
+          <span class="format-detail">短時間で選択問題を確認</span>
+        </label>
 
         <input type="radio" id="format-short5" name="format" value="short5">
-        <label for="format-short5">記述5問</label>
+        <label class="format-option" for="format-short5">
+          <span class="format-title">記述 5問</span>
+          <span class="format-detail">語句を自力で思い出す練習</span>
+        </label>
 
         <input type="radio" id="format-short2" name="format" value="short2">
-        <label for="format-short2">記述2問</label>
+        <label class="format-option" for="format-short2">
+          <span class="format-title">記述 2問</span>
+          <span class="format-detail">軽めのアウトプット練習</span>
+        </label>
 
         <input type="radio" id="format-choice1" name="format" value="choice1">
-        <label for="format-choice1">4択1問</label>
+        <label class="format-option" for="format-choice1">
+          <span class="format-title">4択 1問</span>
+          <span class="format-detail">一問だけ運試し</span>
+        </label>
 
         <input type="radio" id="format-short1" name="format" value="short1">
-        <label for="format-short1">記述1問</label>
+        <label class="format-option" for="format-short1">
+          <span class="format-title">記述 1問</span>
+          <span class="format-detail">一語だけ思い出す</span>
+        </label>
       </div>
-    </div>
+    </section>
 
-    <button id="start-btn" class="btn btn-primary btn-lg w-100">
-      開始
-    </button>
+    <div id="start-error" class="alert" role="alert" hidden></div>
 
-  </div>
+    <button id="start-btn" type="button" class="btn-primary btn-block">開始する</button>
+  </main>
 
   <!-- ========================= -->
   <!-- ② 出題画面 -->
   <!-- ========================= -->
-  <div id="screen-quiz" class="d-none">
-
-    <div class="card bg-secondary">
-      <div class="card-body">
-
-        <h5 id="question-counter"></h5>
-
-        <img id="question-image" class="img-fluid mb-3" alt="問題画像">
-
-        <!-- 論述テキスト -->
-        <div id="cloze-text" class="mb-3"></div>
-
-        <!-- 回答エリア -->
-        <div id="answer-area"></div>
-
-        <button id="next-btn" class="btn btn-primary btn-lg w-100 mt-3">
-          次へ
-        </button>
-
-      </div>
+  <main id="screen-quiz" class="screen" hidden>
+    <div class="quiz-top">
+      <p id="question-meta" class="quiz-meta"></p>
+      <p id="question-counter" class="quiz-counter" aria-live="polite"></p>
     </div>
 
-  </div>
+    <div
+      class="progress"
+      role="progressbar"
+      aria-label="進捗"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+      id="progress-bar"
+    >
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+
+    <article class="panel quiz-panel">
+      <img id="question-image" class="question-image" alt="問題画像">
+
+      <div id="cloze-text" class="cloze-text" hidden></div>
+
+      <div id="answer-area" class="answer-area"></div>
+
+      <p id="quiz-hint" class="quiz-hint" aria-hidden="true"></p>
+
+      <button id="next-btn" type="button" class="btn-primary btn-block">次へ</button>
+    </article>
+  </main>
 
   <!-- ========================= -->
   <!-- ③ 結果画面 -->
   <!-- ========================= -->
-  <div id="screen-result" class="d-none">
+  <main id="screen-result" class="screen" hidden>
+    <header class="result-head">
+      <p class="app-eyebrow">RESULT</p>
+      <h2 class="panel-title-lg">結果</h2>
+    </header>
 
-    <h4 id="score" class="mb-4"></h4>
+    <section class="panel score-panel" aria-labelledby="score">
+      <p id="score" class="score-line"></p>
+      <div class="score-detail">
+        <p id="score-percent" class="score-percent"></p>
+        <p id="score-sub" class="score-sub"></p>
+      </div>
+    </section>
 
-    <div class="d-flex justify-content-center mb-4">
-      <button id="back-to-start-btn" class="btn btn-outline-light btn-lg">
-        スタート画面に戻る
-      </button>
-    </div>
+    <section aria-label="各問題の結果">
+      <ol id="result-list" class="result-list"></ol>
+    </section>
 
-    <!-- PC（表） -->
-    <div class="d-none d-md-block">
-      <table class="table table-dark table-striped">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>問題</th>
-            <th>正解</th>
-            <th>あなたの答え</th>
-            <th>判定</th>
-          </tr>
-        </thead>
-        <tbody id="result-table"></tbody>
-      </table>
-    </div>
+    <button id="back-to-start-btn" type="button" class="btn-secondary btn-block">
+      スタート画面に戻る
+    </button>
+  </main>
 
-    <!-- スマホ（カード） -->
-    <div class="d-block d-md-none" id="result-cards"></div>
-
-  </div>
-
+  <footer class="app-footer">
+    <p>歴史能力検定2級 日本史 過去問トレーニング</p>
+  </footer>
 </div>
 
-<!-- JS -->
-<script src="app.js?v=1.0.0"></script>
-
+<script src="app.js?v=2.0.0"></script>
 </body>
 </html>

@@ -1,4 +1,15 @@
 // =======================
+// 設定
+// =======================
+const CHOICE_MARKERS = ["1", "2", "3", "4"];
+
+const TYPE_LABELS = {
+  choice: "四択",
+  short: "記述",
+  cloze: "論述"
+};
+
+// =======================
 // 状態
 // =======================
 const state = {
@@ -12,31 +23,63 @@ const state = {
 // 初期化
 // =======================
 async function init() {
-  const res = await fetch("data/questions.json");
-  state.allQuestions = await res.json();
+  try {
+    const response = await fetch("data/questions.json");
 
-  document.getElementById("start-btn").addEventListener("click", startExam);
-  document.getElementById("next-btn").addEventListener("click", nextQuestion);
-  document.getElementById("back-to-start-btn").addEventListener("click", backToStart);
+    if (!response.ok) {
+      throw new Error(`questions.json の読込に失敗しました（HTTP ${response.status}）`);
+    }
+
+    const questions = await response.json();
+
+    if (!Array.isArray(questions)) {
+      throw new Error("questions.json の形式が配列ではありません。");
+    }
+
+    state.allQuestions = questions;
+
+    document.getElementById("start-btn").addEventListener("click", startExam);
+    document.getElementById("next-btn").addEventListener("click", nextQuestion);
+    document.getElementById("back-to-start-btn").addEventListener("click", backToStart);
+    document.addEventListener("keydown", handleQuizKeydown);
+  } catch (error) {
+    showStartError(error.message || "問題データを読み込めませんでした。");
+    document.getElementById("start-btn").disabled = true;
+    console.error(error);
+  }
 }
 
-window.onload = init;
+window.addEventListener("DOMContentLoaded", init);
 
 // =======================
 // 試験開始
 // =======================
 function startExam() {
-  const year = document.querySelector('input[name="year"]:checked').value;
-  const format = document.querySelector('input[name="format"]:checked').value;
+  clearStartError();
+
+  const year = document.querySelector('input[name="year"]:checked')?.value;
+  const format = document.querySelector('input[name="format"]:checked')?.value;
+
+  if (!year || !format) {
+    showStartError("出題年度と出題形式を選択してください。");
+    return;
+  }
 
   const config = getFormatConfig(format);
+  const questions = buildExam(state.allQuestions, year, config);
 
-  state.questions = buildExam(state.allQuestions, year, config);
+  if (questions.length === 0) {
+    showStartError("選択した条件に該当する問題がありません。");
+    return;
+  }
+
+  state.questions = questions;
   state.answers = {};
   state.currentIndex = 0;
 
   showScreen("screen-quiz");
   renderQuestion();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 // =======================
@@ -44,24 +87,37 @@ function startExam() {
 // =======================
 function getFormatConfig(format) {
   switch (format) {
-    case "full": return { choice: 45, short: 5, cloze: 0 };
-    case "mid": return { choice: 22, short: 3, cloze: 0 };
-    case "small1": return { choice: 10, short: 2, cloze: 0 };
-    case "small2": return { choice: 4, short: 1, cloze: 0 };
-    case "choice10": return { choice: 10, short: 0, cloze: 0 };
-    case "choice5": return { choice: 5, short: 0, cloze: 0 };
-    case "short5": return { choice: 0, short: 5, cloze: 0 };
-    case "short2": return { choice: 0, short: 2, cloze: 0 };
-    case "choice1": return { choice: 1, short: 0, cloze: 0 };
-    case "short1": return { choice: 0, short: 1, cloze: 0 };
+    case "mid":
+      return { choice: 22, short: 3, cloze: 0 };
+    case "small1":
+      return { choice: 10, short: 2, cloze: 0 };
+    case "small2":
+      return { choice: 4, short: 1, cloze: 0 };
+    case "choice10":
+      return { choice: 10, short: 0, cloze: 0 };
+    case "choice5":
+      return { choice: 5, short: 0, cloze: 0 };
+    case "short5":
+      return { choice: 0, short: 5, cloze: 0 };
+    case "short2":
+      return { choice: 0, short: 2, cloze: 0 };
+    case "choice1":
+      return { choice: 1, short: 0, cloze: 0 };
+    case "short1":
+      return { choice: 0, short: 1, cloze: 0 };
+    default:
+      return { choice: 0, short: 0, cloze: 0 };
   }
 }
 
 // =======================
 // 出題生成
 // =======================
-function buildExam(all, year, config) {
-  const pool = year === "all" ? all : all.filter(q => q.year == year);
+function buildExam(allQuestions, year, config) {
+  const pool =
+    year === "all"
+      ? allQuestions
+      : allQuestions.filter(question => String(question.year) === String(year));
 
   return shuffle([
     ...pick(pool, "choice", config.choice),
@@ -70,128 +126,284 @@ function buildExam(all, year, config) {
   ]);
 }
 
-function pick(pool, type, n) {
-  const filtered = pool.filter(q => q.type === type);
-  return shuffle(filtered).slice(0, n);
+function pick(pool, type, count) {
+  const filtered = pool.filter(question => question.type === type);
+  return shuffle(filtered).slice(0, count);
 }
 
-function shuffle(arr) {
-  return [...arr].sort(() => Math.random() - 0.5);
+// Fisher-Yates shuffle
+function shuffle(items) {
+  const result = [...items];
+
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+  }
+
+  return result;
 }
 
 // =======================
 // 問題表示
 // =======================
 function renderQuestion() {
-  const q = state.questions[state.currentIndex];
+  const question = state.questions[state.currentIndex];
+  const total = state.questions.length;
+  const current = state.currentIndex + 1;
+
+  document.getElementById("question-meta").textContent =
+    `${question.year}年　第${question.questionNumber}問　${TYPE_LABELS[question.type] || ""}`;
 
   document.getElementById("question-counter").textContent =
-    `問題 ${state.currentIndex + 1} / ${state.questions.length}`;
+    `${current} / ${total}`;
 
-  document.getElementById("question-image").src = q.image;
+  updateProgress(current, total);
 
-  // 論述テキスト
-  const clozeText = document.getElementById("cloze-text");
-  clozeText.innerHTML = "";
-  if (q.type === "cloze") {
-    clozeText.innerHTML = `<p>${q.instruction || ""}</p><p>${q.promptText}</p>`;
+  const image = document.getElementById("question-image");
+  image.src = question.image;
+  image.alt = `${question.year}年 第${question.questionNumber}問の問題画像`;
+
+  renderClozeText(question);
+
+  const answerArea = document.getElementById("answer-area");
+  answerArea.innerHTML = "";
+
+  if (question.type === "choice") {
+    renderChoice(answerArea, question);
+  } else if (question.type === "short") {
+    renderShort(answerArea, question);
+  } else if (question.type === "cloze") {
+    renderCloze(answerArea, question);
   }
 
-  // 回答エリア
-  const area = document.getElementById("answer-area");
+  restoreAnswer(question);
+  updateQuizHint(question.type);
+
+  const nextButton = document.getElementById("next-btn");
+  nextButton.textContent =
+    state.currentIndex === total - 1 ? "結果を見る" : "次へ";
+}
+
+function updateProgress(current, total) {
+  const percent = Math.round(((current - 1) / total) * 100);
+
+  document.getElementById("progress-fill").style.width = `${percent}%`;
+  document.getElementById("progress-bar").setAttribute("aria-valuenow", String(percent));
+}
+
+function renderClozeText(question) {
+  const area = document.getElementById("cloze-text");
   area.innerHTML = "";
 
-  if (q.type === "choice") {
-    renderChoice(area, q);
+  if (question.type !== "cloze") {
+    area.hidden = true;
+    return;
   }
 
-  if (q.type === "short") {
-    renderShort(area, q);
+  area.hidden = false;
+
+  if (question.instruction) {
+    const instruction = document.createElement("p");
+    instruction.className = "cloze-instruction";
+    instruction.textContent = question.instruction;
+    area.appendChild(instruction);
   }
 
-  if (q.type === "cloze") {
-    renderCloze(area, q);
+  if (question.promptText) {
+    const prompt = document.createElement("p");
+    prompt.className = "cloze-prompt";
+    prompt.textContent = question.promptText;
+    area.appendChild(prompt);
   }
-
-  restoreAnswer(q);
 }
 
 // =======================
-// UI生成
+// 四択UI
 // =======================
-function renderChoice(area, q) {
-  const div = document.createElement("div");
-  div.className = "d-grid gap-2";
+function renderChoice(area, question) {
+  ["1", "2", "3", "4"].forEach((choice, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "choice-btn";
+    button.dataset.choice = choice;
+    button.setAttribute("aria-pressed", "false");
 
-  ["1", "2", "3", "4"].forEach(num => {
-    const btn = document.createElement("button");
-    btn.className = "btn btn-outline-light btn-lg";
-    btn.textContent = ["①","②","③","④"][num-1];
+    const marker = document.createElement("span");
+    marker.className = "choice-marker";
+    marker.setAttribute("aria-hidden", "true");
+    marker.textContent = CHOICE_MARKERS[index];
 
-    btn.onclick = () => {
-      state.answers[q.id] = num;
-      highlightChoice(div, num);
-    };
+    const text = document.createElement("span");
+    text.className = "choice-text";
+    text.textContent = `選択肢 ${toCircledNumber(choice)}`;
 
-    div.appendChild(btn);
+    button.append(marker, text);
+
+    button.addEventListener("click", () => {
+      state.answers[question.id] = choice;
+      highlightChoice(area, choice);
+    });
+
+    area.appendChild(button);
   });
-
-  area.appendChild(div);
 }
 
-function highlightChoice(div, selected) {
-  [...div.children].forEach((btn, i) => {
-    btn.classList.toggle("btn-light", String(i+1) === selected);
-    btn.classList.toggle("btn-outline-light", String(i+1) !== selected);
+function toCircledNumber(value) {
+  return ["①", "②", "③", "④"][Number(value) - 1] || value;
+}
+
+function highlightChoice(container, selectedChoice) {
+  [...container.querySelectorAll(".choice-btn")].forEach(button => {
+    const selected = button.dataset.choice === String(selectedChoice);
+
+    button.classList.toggle("is-selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
   });
 }
 
-function renderShort(area, q) {
+// =======================
+// 記述UI
+// =======================
+function renderShort(area, question) {
+  const label = document.createElement("label");
+  label.className = "input-label";
+  label.setAttribute("for", `answer-${question.id}`);
+  label.textContent = "解答";
+
   const input = document.createElement("input");
-  input.className = "form-control form-control-lg";
-  input.oninput = e => {
-    state.answers[q.id] = e.target.value;
-  };
-  area.appendChild(input);
+  input.id = `answer-${question.id}`;
+  input.type = "text";
+  input.className = "answer-input";
+  input.autocomplete = "off";
+  input.placeholder = "解答を入力";
+
+  input.addEventListener("input", event => {
+    state.answers[question.id] = event.target.value;
+  });
+
+  area.append(label, input);
 }
 
-function renderCloze(area, q) {
-  q.blanks.forEach(b => {
+// =======================
+// 論述UI（将来データに含まれた場合にも対応）
+// =======================
+function renderCloze(area, question) {
+  const blanks = Array.isArray(question.blanks) ? question.blanks : [];
+
+  blanks.forEach((blank, index) => {
+    const field = document.createElement("div");
+    field.className = "cloze-field";
+
     const label = document.createElement("label");
-    label.textContent = b.label;
+    label.className = "input-label";
+    label.setAttribute("for", `blank-${question.id}-${index}`);
+    label.textContent = blank.label;
 
     const input = document.createElement("input");
-    input.className = "form-control mb-2";
-    input.oninput = e => {
-      if (!state.answers[q.id]) state.answers[q.id] = {};
-      state.answers[q.id][b.label] = e.target.value;
-    };
+    input.id = `blank-${question.id}-${index}`;
+    input.type = "text";
+    input.className = "answer-input";
+    input.autocomplete = "off";
+    input.placeholder = `${blank.label}を入力`;
 
-    area.appendChild(label);
-    area.appendChild(input);
+    input.addEventListener("input", event => {
+      if (!state.answers[question.id]) {
+        state.answers[question.id] = {};
+      }
+
+      state.answers[question.id][blank.label] = event.target.value;
+    });
+
+    field.append(label, input);
+    area.appendChild(field);
   });
 }
 
 // =======================
 // 回答復元
 // =======================
-function restoreAnswer(q) {
-  const ans = state.answers[q.id];
-  if (!ans) return;
+function restoreAnswer(question) {
+  const answer = state.answers[question.id];
 
-  if (q.type === "choice") {
-    highlightChoice(document.querySelector("#answer-area > div"), ans);
+  if (answer === undefined) {
+    return;
   }
 
-  if (q.type === "short") {
-    document.querySelector("#answer-area input").value = ans;
+  if (question.type === "choice") {
+    highlightChoice(document.getElementById("answer-area"), answer);
+    return;
   }
 
-  if (q.type === "cloze") {
+  if (question.type === "short") {
+    const input = document.querySelector("#answer-area input");
+
+    if (input) {
+      input.value = answer;
+    }
+
+    return;
+  }
+
+  if (question.type === "cloze") {
     const inputs = document.querySelectorAll("#answer-area input");
-    q.blanks.forEach((b, i) => {
-      inputs[i].value = ans[b.label] || "";
+    const blanks = Array.isArray(question.blanks) ? question.blanks : [];
+
+    blanks.forEach((blank, index) => {
+      if (inputs[index]) {
+        inputs[index].value = answer?.[blank.label] || "";
+      }
     });
+  }
+}
+
+function updateQuizHint(type) {
+  const hint = document.getElementById("quiz-hint");
+
+  if (type === "choice") {
+    hint.textContent = "キー 1〜4 で選択 ／ Enter で次へ";
+  } else {
+    hint.textContent = "解答を入力したら「次へ」を押してください";
+  }
+}
+
+// =======================
+// キーボード操作
+// =======================
+function handleQuizKeydown(event) {
+  const quizScreen = document.getElementById("screen-quiz");
+
+  if (quizScreen.hidden || event.ctrlKey || event.metaKey || event.altKey) {
+    return;
+  }
+
+  const question = state.questions[state.currentIndex];
+
+  if (!question) {
+    return;
+  }
+
+  if (question.type === "choice") {
+    const keyIndex = ["1", "2", "3", "4"].indexOf(event.key);
+
+    if (keyIndex !== -1) {
+      const buttons = document.querySelectorAll("#answer-area .choice-btn");
+
+      if (buttons[keyIndex]) {
+        buttons[keyIndex].click();
+        event.preventDefault();
+      }
+
+      return;
+    }
+  }
+
+  if (
+    event.key === "Enter" &&
+    document.activeElement.tagName !== "BUTTON" &&
+    document.activeElement.tagName !== "TEXTAREA"
+  ) {
+    nextQuestion();
+    event.preventDefault();
   }
 }
 
@@ -200,36 +412,44 @@ function restoreAnswer(q) {
 // =======================
 function nextQuestion() {
   if (state.currentIndex < state.questions.length - 1) {
-    state.currentIndex++;
+    state.currentIndex += 1;
     renderQuestion();
-  } else {
-    showResult();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
   }
+
+  showResult();
 }
 
 // =======================
 // 採点
 // =======================
-function normalize(s) {
-  return String(s || "").trim();
+function normalize(value) {
+  return String(value ?? "").trim();
 }
 
-function judge(q, ans) {
-  if (!ans) return false;
-
-  if (q.type === "choice") {
-    return normalize(ans) === normalize(q.answer);
+function judge(question, answer) {
+  if (answer === undefined || answer === null || answer === "") {
+    return false;
   }
 
-  if (q.type === "short") {
-    return normalize(ans) === normalize(q.answer);
+  if (question.type === "choice") {
+    return normalize(answer) === normalize(question.answer);
   }
 
-  if (q.type === "cloze") {
-    return q.blanks.every(b =>
-      normalize(ans[b.label]) === normalize(b.answer)
+  if (question.type === "short") {
+    return normalize(answer) === normalize(question.answer);
+  }
+
+  if (question.type === "cloze") {
+    const blanks = Array.isArray(question.blanks) ? question.blanks : [];
+
+    return blanks.every(blank =>
+      normalize(answer?.[blank.label]) === normalize(blank.answer)
     );
   }
+
+  return false;
 }
 
 // =======================
@@ -238,93 +458,182 @@ function judge(q, ans) {
 function showResult() {
   showScreen("screen-result");
 
-  let correct = 0;
+  let correctCount = 0;
+  const list = document.getElementById("result-list");
+  list.innerHTML = "";
 
-  const table = document.getElementById("result-table");
-  const cards = document.getElementById("result-cards");
+  state.questions.forEach((question, index) => {
+    const answer = state.answers[question.id];
+    const isCorrect = judge(question, answer);
 
-  table.innerHTML = "";
-  cards.innerHTML = "";
+    if (isCorrect) {
+      correctCount += 1;
+    }
 
-  state.questions.forEach((q, i) => {
-    const ans = state.answers[q.id];
-    const ok = judge(q, ans);
-
-    if (ok) correct++;
-
-    const correctText = getCorrectText(q);
-    const userText = getUserText(q, ans);
-
-    // ===== PC 表 =====
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${i + 1}</td>
-      <td>
-        <div class="mb-2">${q.year}年 第${q.questionNumber}問</div>
-        <img src="${q.image}" class="result-image-pc img-fluid">
-      </td>
-      <td>${correctText}</td>
-      <td>${userText}</td>
-      <td class="${ok ? "correct" : "incorrect"}">${ok ? "○" : "×"}</td>
-    `;
-    table.appendChild(tr);
-
-    // ===== スマホカード =====
-    const card = document.createElement("div");
-    card.className = "card bg-secondary mb-3";
-    card.innerHTML = `
-      <div class="card-body">
-        <h6>${q.year}年 第${q.questionNumber}問</h6>
-        <img src="${q.image}" class="img-fluid mb-3 result-image-mobile">
-        <div class="mb-1"><strong>正解：</strong>${correctText}</div>
-        <div class="mb-1"><strong>あなたの答え：</strong>${userText}</div>
-        <div><strong>判定：</strong><span class="${ok ? "correct" : "incorrect"}">${ok ? "○" : "×"}</span></div>
-      </div>
-    `;
-    cards.appendChild(card);
+    list.appendChild(createResultItem(question, answer, isCorrect, index));
   });
 
-  document.getElementById("score").textContent =
-    `得点：${correct} / ${state.questions.length}`;
+  const total = state.questions.length;
+  const percent = Math.round((correctCount / total) * 100);
+
+  const score = document.getElementById("score");
+  score.innerHTML = "";
+
+  const scoreNum = document.createElement("span");
+  scoreNum.className = "score-num";
+  scoreNum.textContent = String(correctCount);
+
+  score.append("得点 ", scoreNum, ` / ${total}`);
+
+  document.getElementById("score-percent").textContent = `正答率 ${percent}%`;
+  document.getElementById("score-sub").textContent =
+    percent === 100
+      ? "全問正解です。見事。"
+      : percent >= 60
+        ? "合格ライン（60%）に到達しています。"
+        : "合格ラインは60%です。復習して再挑戦しましょう。";
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function createResultItem(question, answer, isCorrect, index) {
+  const item = document.createElement("li");
+  item.className = `result-item ${isCorrect ? "is-correct" : "is-incorrect"}`;
+
+  const badge = document.createElement("span");
+  badge.className = "result-badge";
+  badge.textContent = isCorrect ? "○" : "×";
+  badge.setAttribute("role", "img");
+  badge.setAttribute("aria-label", isCorrect ? "正解" : "不正解");
+
+  const body = document.createElement("div");
+  body.className = "result-body";
+
+  const meta = document.createElement("p");
+  meta.className = "result-meta";
+  meta.textContent =
+    `Q${index + 1}　${question.year}年　第${question.questionNumber}問　${TYPE_LABELS[question.type] || ""}`;
+
+  const image = document.createElement("img");
+  image.className = "result-image";
+  image.src = question.image;
+  image.alt = `${question.year}年 第${question.questionNumber}問の問題画像`;
+  image.loading = "lazy";
+
+  const answers = document.createElement("dl");
+  answers.className = "result-answers";
+
+  answers.appendChild(
+    createAnswerLine("正解", getCorrectText(question), "answer-correct")
+  );
+
+  answers.appendChild(
+    createAnswerLine(
+      "あなたの答え",
+      getUserText(question, answer),
+      isCorrect ? "answer-correct" : "answer-wrong"
+    )
+  );
+
+  body.append(meta, image, answers);
+  item.append(badge, body);
+
+  return item;
+}
+
+function createAnswerLine(labelText, value, valueClass) {
+  const line = document.createElement("div");
+
+  const label = document.createElement("dt");
+  label.textContent = labelText;
+
+  const detail = document.createElement("dd");
+  detail.textContent = value;
+  detail.className = valueClass;
+
+  line.append(label, detail);
+
+  return line;
 }
 
 // =======================
 // 表示用変換
 // =======================
-function getCorrectText(q) {
-  if (q.type === "choice") return ["①","②","③","④"][q.answer-1];
-  if (q.type === "short") return q.answer;
-  if (q.type === "cloze") {
-    return q.blanks.map(b => `${b.label}:${b.answer}`).join(" / ");
+function getCorrectText(question) {
+  if (question.type === "choice") {
+    return toCircledNumber(question.answer);
   }
+
+  if (question.type === "short") {
+    return question.answer;
+  }
+
+  if (question.type === "cloze") {
+    const blanks = Array.isArray(question.blanks) ? question.blanks : [];
+    return blanks.map(blank => `${blank.label}：${blank.answer}`).join(" ／ ");
+  }
+
+  return "-";
 }
 
-function getUserText(q, ans) {
-  if (!ans) return "-";
-
-  if (q.type === "choice") return ["①","②","③","④"][ans-1];
-  if (q.type === "short") return ans;
-  if (q.type === "cloze") {
-    return q.blanks.map(b => `${b.label}:${ans[b.label] || "-"}`).join(" / ");
+function getUserText(question, answer) {
+  if (answer === undefined || answer === null || answer === "") {
+    return "未回答";
   }
+
+  if (question.type === "choice") {
+    return toCircledNumber(answer);
+  }
+
+  if (question.type === "short") {
+    return answer;
+  }
+
+  if (question.type === "cloze") {
+    const blanks = Array.isArray(question.blanks) ? question.blanks : [];
+
+    return blanks
+      .map(blank => `${blank.label}：${answer?.[blank.label] || "未回答"}`)
+      .join(" ／ ");
+  }
+
+  return "未回答";
+}
+
+// =======================
+// エラー表示
+// =======================
+function showStartError(message) {
+  const area = document.getElementById("start-error");
+  area.textContent = message;
+  area.hidden = false;
+}
+
+function clearStartError() {
+  const area = document.getElementById("start-error");
+  area.textContent = "";
+  area.hidden = true;
 }
 
 // =======================
 // 画面切り替え
 // =======================
 function showScreen(id) {
-  ["screen-start", "screen-quiz", "screen-result"]
-    .forEach(s => document.getElementById(s).classList.add("d-none"));
+  ["screen-start", "screen-quiz", "screen-result"].forEach(screenId => {
+    document.getElementById(screenId).hidden = true;
+  });
 
-  document.getElementById(id).classList.remove("d-none");
+  document.getElementById(id).hidden = false;
 }
 
 // =======================
-// 戻る処理
+// 戻る
 // =======================
 function backToStart() {
   state.questions = [];
   state.answers = {};
   state.currentIndex = 0;
+
   showScreen("screen-start");
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
