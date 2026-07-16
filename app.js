@@ -182,6 +182,8 @@ function renderQuestion() {
   const nextButton = document.getElementById("next-btn");
   nextButton.textContent =
     state.currentIndex === total - 1 ? "結果を見る" : "次へ";
+
+  updateNextButtonState(question);
 }
 
 function updateProgress(current, total) {
@@ -242,6 +244,7 @@ function renderChoice(area, question) {
     button.addEventListener("click", () => {
       state.answers[question.id] = choice;
       highlightChoice(area, choice);
+      updateNextButtonState(question);
     });
 
     area.appendChild(button);
@@ -279,6 +282,7 @@ function renderShort(area, question) {
 
   input.addEventListener("input", event => {
     state.answers[question.id] = event.target.value;
+    updateNextButtonState(question);
   });
 
   area.append(label, input);
@@ -312,6 +316,7 @@ function renderCloze(area, question) {
       }
 
       state.answers[question.id][blank.label] = event.target.value;
+      updateNextButtonState(question);
     });
 
     field.append(label, input);
@@ -360,49 +365,88 @@ function updateQuizHint(type) {
   const hint = document.getElementById("quiz-hint");
 
   if (type === "choice") {
-    hint.textContent = "キー 1〜4 で選択 ／ Enter で次へ";
+    hint.textContent = "キー 1〜4 で選択 ／ 次へはボタン";
   } else {
-    hint.textContent = "解答を入力したら「次へ」を押してください";
+    hint.textContent = "解答を入力して「次へ」を押してください";
   }
 }
 
 // =======================
+// 回答済み判定・「次へ」制御
+// =======================
+function isQuestionAnswered(question) {
+  const answer = state.answers[question.id];
+
+  if (question.type === "choice") {
+    return answer !== undefined && answer !== null && answer !== "";
+  }
+
+  if (question.type === "short") {
+    return normalize(answer) !== "";
+  }
+
+  // 2級には論述問題はないが、将来データに含まれた場合の保険
+  if (question.type === "cloze") {
+    const blanks = Array.isArray(question.blanks) ? question.blanks : [];
+
+    return (
+      blanks.length > 0 &&
+      blanks.every(blank => normalize(answer?.[blank.label]) !== "")
+    );
+  }
+
+  return false;
+}
+
+function updateNextButtonState(question) {
+  const nextButton = document.getElementById("next-btn");
+  nextButton.disabled = !isQuestionAnswered(question);
+}
+
+// =======================
 // キーボード操作
+// 四択の数字キー1〜4だけを扱う。
+// Enterは日本語変換・確定に使うため、画面遷移には使用しない。
 // =======================
 function handleQuizKeydown(event) {
   const quizScreen = document.getElementById("screen-quiz");
 
-  if (quizScreen.hidden || event.ctrlKey || event.metaKey || event.altKey) {
+  if (
+    quizScreen.hidden ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.altKey ||
+    event.isComposing
+  ) {
     return;
   }
 
   const question = state.questions[state.currentIndex];
 
-  if (!question) {
+  if (!question || question.type !== "choice") {
     return;
   }
 
-  if (question.type === "choice") {
-    const keyIndex = ["1", "2", "3", "4"].indexOf(event.key);
+  const activeElement = document.activeElement;
+  const isEditing =
+    activeElement?.tagName === "INPUT" ||
+    activeElement?.tagName === "TEXTAREA" ||
+    activeElement?.isContentEditable;
 
-    if (keyIndex !== -1) {
-      const buttons = document.querySelectorAll("#answer-area .choice-btn");
-
-      if (buttons[keyIndex]) {
-        buttons[keyIndex].click();
-        event.preventDefault();
-      }
-
-      return;
-    }
+  if (isEditing) {
+    return;
   }
 
-  if (
-    event.key === "Enter" &&
-    document.activeElement.tagName !== "BUTTON" &&
-    document.activeElement.tagName !== "TEXTAREA"
-  ) {
-    nextQuestion();
+  const keyIndex = ["1", "2", "3", "4"].indexOf(event.key);
+
+  if (keyIndex === -1) {
+    return;
+  }
+
+  const buttons = document.querySelectorAll("#answer-area .choice-btn");
+
+  if (buttons[keyIndex]) {
+    buttons[keyIndex].click();
     event.preventDefault();
   }
 }
@@ -411,6 +455,12 @@ function handleQuizKeydown(event) {
 // 次へ
 // =======================
 function nextQuestion() {
+  const question = state.questions[state.currentIndex];
+
+  if (!question || !isQuestionAnswered(question)) {
+    return;
+  }
+
   if (state.currentIndex < state.questions.length - 1) {
     state.currentIndex += 1;
     renderQuestion();
