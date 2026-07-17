@@ -250,14 +250,7 @@ img {
 
 .chip-group input[type="radio"],
 .format-list input[type="radio"] {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  margin: 0;
-  opacity: 0;
-  pointer-events: none;
+  display: none;
 }
 
 .chip {
